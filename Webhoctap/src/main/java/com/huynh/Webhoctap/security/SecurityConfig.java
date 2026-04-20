@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.NullRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -48,6 +49,7 @@ public class SecurityConfig {
                                 "/login",
                                 "/login/**",
                                 "/register",
+                                "/register/**",
                                 "/error",
                                 "/error/**",
                                 "/access-denied",
@@ -74,13 +76,17 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/access-denied")
+                )
+                .requestCache(cache -> cache.requestCache(new NullRequestCache()))
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/login", "/register")
                 )
                 .authenticationProvider(authenticationProvider());
 
