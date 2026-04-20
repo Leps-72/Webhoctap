@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+      lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Webhoctap — Trang chủ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0f0e0d; --ink-2: #3d3b38; --ink-3: #7a7672;
+            --paper: #faf9f7; --paper-2: #f0ede8; --paper-3: #e4e0d8;
+            --accent: #c8521a; --accent-dk: #9e3e10; --accent-lt: #f5e6dc;
+            --font-display: 'DM Serif Display', Georgia, serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+        body { font-family: var(--font-body); background: var(--paper); color: var(--ink); }
+
+        /* ── Navbar ── */
+        nav {
+            display: flex; align-items: center; gap: 1.5rem;
+            padding: 0 2rem; height: 60px;
+            border-bottom: 1px solid var(--paper-3);
+            background: var(--paper);
+        }
+        .brand {
+            font-family: var(--font-display); font-size: 1.4rem;
+            color: var(--ink); text-decoration: none; margin-right: auto;
+        }
+        .brand span { color: var(--accent); }
+        nav a {
+            font-size: .875rem; font-weight: 500; color: var(--ink-2);
+            text-decoration: none; padding: .4rem .8rem;
+            border-radius: 6px; transition: background .15s;
+        }
+        nav a:hover { background: var(--paper-2); }
+        .btn-accent {
+            background: var(--accent); color: #fff !important;
+            padding: .45rem 1.1rem !important;
+        }
+        .btn-accent:hover { background: var(--accent-dk) !important; }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 5rem 1.5rem 4rem;
+            max-width: 680px; margin: 0 auto;
+        }
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.2rem; font-weight: 400;
+            letter-spacing: -.04em; line-height: 1.15;
+            margin-bottom: 1.25rem;
+        }
+        .hero h1 em { font-style: italic; color: var(--accent); }
+        .hero p {
+            color: var(--ink-3); font-size: 1.05rem;
+            line-height: 1.7; margin-bottom: 2.5rem;
+        }
+        .hero-btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-block; padding: .75rem 1.5rem;
+            border-radius: 8px; font-weight: 600; font-size: .95rem;
+            text-decoration: none; transition: all .2s;
+        }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-dk); transform: translateY(-1px); }
+        .btn-secondary {
+            background: var(--paper-2); color: var(--ink-2);
+            border: 1.5px solid var(--paper-3);
+        }
+        .btn-secondary:hover { background: var(--paper-3); }
+
+        /* ── Stats ── */
+        .stats {
+            display: flex; justify-content: center; gap: 3rem;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--paper-3);
+            border-bottom: 1px solid var(--paper-3);
+            background: var(--paper-2);
+        }
+        .stat-item { text-align: center; }
+        .stat-num {
+            font-family: var(--font-display); font-size: 2rem;
+            color: var(--accent); letter-spacing: -.03em;
+        }
+        .stat-label { font-size: .8rem; color: var(--ink-3); margin-top: .2rem; }
+
+        /* ── Course list ── */
+        .section {
+            max-width: 1100px; margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        .section-header {
+            display: flex; align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.6rem; font-weight: 400;
+        }
+        .section-link {
+            font-size: .875rem; color: var(--accent);
+            text-decoration: none; font-weight: 500;
+        }
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+        .course-card {
+            background: #fff; border: 1px solid var(--paper-3);
+            border-radius: 12px; overflow: hidden;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .course-card:hover {
+            box-shadow: 0 8px 32px rgba(15,14,13,.1);
+            transform: translateY(-2px);
+        }
+        .course-thumb {
+            height: 140px; background: var(--paper-2);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--ink-3); font-size: .85rem;
+        }
+        .course-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .course-body { padding: 1.1rem; }
+        .course-title {
+            font-weight: 600; font-size: .95rem;
+            margin-bottom: .4rem; color: var(--ink);
+        }
+        .course-meta {
+            font-size: .8rem; color: var(--ink-3);
+            display: flex; gap: .75rem;
+        }
+        .course-action { padding: .75rem 1.1rem; border-top: 1px solid var(--paper-2); }
+        .course-action a {
+            display: block; text-align: center;
+            padding: .55rem; border-radius: 6px;
+            font-size: .85rem; font-weight: 600;
+            background: var(--accent-lt); color: var(--accent-dk);
+            text-decoration: none; transition: background .15s;
+        }
+        .course-action a:hover { background: var(--accent); color: #fff; }
+
+        .empty-state {
+            text-align: center; padding: 3rem;
+            color: var(--ink-3); font-size: .95rem;
+            border: 1.5px dashed var(--paper-3);
+            border-radius: 12px;
+        }
+
+        footer {
+            border-top: 1px solid var(--paper-3);
+            padding: 1.5rem; text-align: center;
+            font-size: .8rem; color: var(--ink-3);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+    <a class="brand" href="/">Web<span>học</span>tập</a>
+
+    <a th:href="@{/}">Khóa học</a>
+
+    <!-- Chưa đăng nhập -->
+    <span sec:authorize="isAnonymous()">
+        <a th:href="@{/login}">Đăng nhập</a>
+    </span>
+    <span sec:authorize="isAnonymous()">
+        <a th:href="@{/register}" class="btn-accent">Đăng ký</a>
+    </span>
+
+    <!-- Admin -->
+    <span sec:authorize="hasRole('Admin')">
+        <a th:href="@{/admin/dashboard}">Dashboard Admin</a>
+    </span>
+
+    <!-- Teacher -->
+    <span sec:authorize="hasRole('Teacher')">
+        <a th:href="@{/teacher/dashboard}">Dashboard Teacher</a>
+    </span>
+
+    <!-- Student -->
+    <span sec:authorize="hasRole('Student')">
+        <a th:href="@{/student/dashboard}">Dashboard</a>
+    </span>
+
+    <!-- Đăng xuất -->
+    <span sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" style="background:none;border:none;cursor:pointer;font-size:.875rem;font-weight:500;color:#3d3b38;padding:.4rem .8rem;border-radius:6px;">
+                Đăng xuất
+            </button>
+        </form>
+    </span>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>Học kiến thức,<br/><em>chia sẻ</em> hiểu biết.</h1>
+    <p>Nền tảng kết nối giáo viên và học sinh — nơi học liệu và quiz trắc nghiệm hội tụ.</p>
+    <div class="hero-btns">
+        <a th:href="@{/register}" class="btn btn-primary" sec:authorize="isAnonymous()">
+            Bắt đầu miễn phí
+        </a>
+        <a th:href="@{/student/courses/explore}" class="btn btn-primary" sec:authorize="hasRole('Student')">
+            Khám phá khóa học
+        </a>
+        <a th:href="@{/teacher/courses/new}" class="btn btn-primary" sec:authorize="hasRole('Teacher')">
+            Tạo khóa học
+        </a>
+        <a th:href="@{/login}" class="btn btn-secondary" sec:authorize="isAnonymous()">
+            Đăng nhập
+        </a>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="stat-item">
+        <div class="stat-num" th:text="${#lists.size(khoaHocs)}">0</div>
+        <div class="stat-label">Khóa học</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-num" th:text="${#lists.size(hocLieus)}">0</div>
+        <div class="stat-label">Học liệu</div>
+    </div>
+</div>
+
+<!-- Danh sách khóa học -->
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">Khóa học nổi bật</h2>
+        <a th:href="@{/student/courses/explore}"
+           sec:authorize="hasRole('Student')"
+           class="section-link">Xem tất cả →</a>
+    </div>
+
+    <div class="course-grid" th:if="${not #lists.isEmpty(khoaHocs)}">
+        <div class="course-card" th:each="kh : ${khoaHocs}">
+            <div class="course-thumb">
+                <img th:if="${kh.anhBia != null}" th:src="${kh.anhBia}" th:alt="${kh.tenKhoaHoc}"/>
+                <span th:if="${kh.anhBia == null}">Chưa có ảnh bìa</span>
+            </div>
+            <div class="course-body">
+                <div class="course-title" th:text="${kh.tenKhoaHoc}">Tên khóa học</div>
+                <div class="course-meta">
+                    <span th:text="${kh.giaoVien?.hoTen ?: 'Giáo viên'}">Giáo viên</span>
+                </div>
+            </div>
+            <div class="course-action">
+                <a th:href="@{/student/courses/{id}(id=${kh.maKhoaHoc})}"
+                   sec:authorize="hasRole('Student')">Xem khóa học</a>
+                <a th:href="@{/login}"
+                   sec:authorize="isAnonymous()">Đăng nhập để học</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(khoaHocs)}">
+        Chưa có khóa học nào được phê duyệt.
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Webhoctap &mdash; Nền tảng chia sẻ học liệu &amp; Quiz
+</footer>
+
+</body>
+</html>
