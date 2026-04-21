@@ -6,34 +6,56 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body{background:#f0f4f8;font-family:'Segoe UI',sans-serif;}
-        .sidebar{background:linear-gradient(160deg,#1a2a4a,#1d4ed8);min-height:100vh;width:240px;position:fixed;top:0;left:0;z-index:100;padding-top:20px;}
+        :root{--brand-from:#1a2a4a;--brand-to:#1d4ed8;--accent:#3b82f6;--bg:#f0f4f8;}
+        body{background:var(--bg);font-family:'Segoe UI',sans-serif;}
+        /* ── Sidebar ── */
+        .sidebar{background:linear-gradient(160deg,var(--brand-from),var(--brand-to));min-height:100vh;width:240px;position:fixed;top:0;left:0;z-index:100;padding-top:20px;}
         .sidebar .brand{color:#fff;font-size:1.3rem;font-weight:700;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:10px;}
         .sidebar .nav-link{color:rgba(255,255,255,.8);padding:10px 20px;border-radius:8px;margin:2px 10px;transition:.2s;display:flex;align-items:center;gap:10px;}
         .sidebar .nav-link:hover,.sidebar .nav-link.active{background:rgba(255,255,255,.15);color:#fff;}
         .sidebar .nav-link i{width:20px;text-align:center;}
         .sidebar .section-label{color:rgba(255,255,255,.45);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;padding:12px 20px 4px;}
+        /* ── Layout ── */
         .main-content{margin-left:240px;padding:30px;}
         .topbar{background:#fff;border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.06);}
         .panel{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:24px;}
-        .filter-bar{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
-        .form-control,.form-select{border-radius:8px;border:1.5px solid #e5e7eb;padding:7px 12px;font-size:.88rem;}
-        .table th{font-size:.78rem;text-transform:uppercase;color:#6b7280;}
-        .badge-status{font-size:.72rem;padding:4px 10px;border-radius:20px;font-weight:600;}
-        .action-btn{font-size:.78rem;padding:4px 12px;border-radius:20px;}
-        .user-avatar{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-size:.9rem;}
-        .avatar-admin{background:#dc2626;}
-        .avatar-teacher{background:#0ea5e9;}
-        .avatar-student{background:#22c55e;}
+        /* ── Filter bar ── */
+        .filter-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:20px 24px;margin-bottom:20px;}
+        .filter-card .form-control,.filter-card .form-select{border-radius:8px;border:1.5px solid #e5e7eb;padding:8px 12px;font-size:.88rem;transition:.2s;}
+        .filter-card .form-control:focus,.filter-card .form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+        /* ── Table ── */
+        .table th{font-size:.76rem;text-transform:uppercase;color:#6b7280;letter-spacing:.5px;background:#f9fafb;}
+        .table td{vertical-align:middle;}
+        /* ── Badges ── */
+        .badge-role{font-size:.72rem;padding:4px 10px;border-radius:20px;font-weight:600;}
+        .badge-admin{background:#fee2e2;color:#dc2626;}
+        .badge-teacher{background:#dbeafe;color:#1d4ed8;}
+        .badge-student{background:#dcfce7;color:#15803d;}
+        .badge-active{background:#dcfce7;color:#15803d;}
+        .badge-locked{background:#f3f4f6;color:#6b7280;}
+        /* ── Action buttons ── */
+        .action-btn{font-size:.77rem;padding:4px 11px;border-radius:20px;white-space:nowrap;}
+        /* ── Avatar ── */
+        .user-avatar{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:.9rem;flex-shrink:0;}
+        .avatar-admin{background:linear-gradient(135deg,#dc2626,#b91c1c);}
+        .avatar-teacher{background:linear-gradient(135deg,#0ea5e9,#0284c7);}
+        .avatar-student{background:linear-gradient(135deg,#22c55e,#16a34a);}
+        /* ── Stats ── */
+        .stat-chip{display:inline-flex;align-items:center;gap:6px;background:#f0f4f8;border-radius:8px;padding:4px 12px;font-size:.8rem;font-weight:600;color:#374151;}
+        /* ── Search clear ── */
+        .has-clear{position:relative;}
+        .has-clear .btn-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;font-size:.8rem;cursor:pointer;padding:0;}
+        .has-clear .btn-clear:hover{color:#374151;}
     </style>
 </head>
 <body>
+<!-- Sidebar -->
 <div class="sidebar">
     <div class="brand"><i class="fas fa-shield-alt"></i> Admin Panel</div>
     <div class="section-label">Quản lý</div>
     <a th:href="@{/admin/dashboard}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Bảng điều khiển</a>
-    <a th:href="@{/admin/users}" class="nav-link active"><i class="fas fa-users"></i> Người dùng</a>
-    <a th:href="@{/admin/courses}" class="nav-link"><i class="fas fa-book-open"></i> Khóa học</a>
+    <a th:href="@{/admin/users}"     class="nav-link active"><i class="fas fa-users"></i> Người dùng</a>
+    <a th:href="@{/admin/courses}"   class="nav-link"><i class="fas fa-book-open"></i> Khóa học</a>
     <a th:href="@{/admin/materials}" class="nav-link"><i class="fas fa-file-alt"></i> Học liệu</a>
     <div class="section-label">Tài khoản</div>
     <form method="POST" th:action="@{/logout}">
@@ -43,14 +65,24 @@
         </button>
     </form>
 </div>
+
+<!-- Main -->
 <div class="main-content">
+
+    <!-- Topbar -->
     <div class="topbar">
-        <div><h5 class="mb-0 fw-bold"><i class="fas fa-users text-primary me-2"></i>Quản lý Người dùng</h5>
-            <small class="text-muted" th:text="${#lists.size(danhSach)} + ' người dùng'"></small></div>
-        <a th:href="@{/admin/users/add}" class="btn btn-primary rounded-pill px-4">
-            <i class="fas fa-plus me-1"></i> Thêm người dùng
+        <div class="d-flex align-items-center gap-3">
+            <div>
+                <h5 class="mb-0 fw-bold"><i class="fas fa-users text-primary me-2"></i>Quản lý Người dùng</h5>
+                <small class="text-muted" th:text="${#lists.size(danhSach)} + ' kết quả hiện tại'"></small>
+            </div>
+        </div>
+        <a th:href="@{/admin/users/add}" class="btn btn-primary rounded-pill px-4" id="btnAddUser">
+            <i class="fas fa-user-plus me-2"></i>Thêm người dùng
         </a>
     </div>
+
+    <!-- Alerts -->
     <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show rounded-3">
         <i class="fas fa-check-circle me-2"></i><span th:text="${successMsg}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -60,74 +92,177 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Filter bar -->
-    <form th:action="@{/admin/users}" method="get" class="filter-bar">
-        <div>
-            <label class="form-label mb-1 small fw-bold">Tìm kiếm</label>
-            <input type="text" name="search" class="form-control" placeholder="Tên hoặc email" style="width:250px;">
-        </div>
-        <div>
-            <label class="form-label mb-1 small fw-bold">Vai trò</label>
-            <select name="role" class="form-select" style="width:150px;">
-                <option value="">Tất cả</option>
-                <option value="Admin">Admin</option>
-                <option value="Teacher">Giáo viên</option>
-                <option value="Student">Học sinh</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-outline-secondary rounded-pill px-3">
-            <i class="fas fa-filter me-1"></i> Lọc
-        </button>
-    </form>
+    <!-- ══ Filter Card ══ -->
+    <div class="filter-card">
+        <form th:action="@{/admin/users}" method="get" id="filterForm">
+            <div class="row g-3 align-items-end">
+                <!-- Tìm kiếm -->
+                <div class="col-12 col-md-5">
+                    <label class="form-label small fw-bold mb-1"><i class="fas fa-search me-1 text-primary"></i>Tìm kiếm</label>
+                    <div class="has-clear">
+                        <input type="text" name="search" id="searchInput" class="form-control"
+                               placeholder="Tên hoặc email..."
+                               th:value="${search}" autocomplete="off">
+                        <button type="button" class="btn-clear" id="clearSearch"
+                                th:style="${search != null and !search.isEmpty()} ? 'display:inline' : 'display:none'"
+                                onclick="clearField('searchInput','clearSearch')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
 
+                <!-- Vai trò -->
+                <div class="col-6 col-md-3">
+                    <label class="form-label small fw-bold mb-1"><i class="fas fa-user-tag me-1 text-primary"></i>Vai trò</label>
+                    <select name="role" class="form-select" id="roleSelect">
+                        <option value="" th:selected="${role == ''}">Tất cả vai trò</option>
+                        <option value="Admin"   th:selected="${role == 'Admin'}">Admin</option>
+                        <option value="Teacher" th:selected="${role == 'Teacher'}">Giáo viên</option>
+                        <option value="Student" th:selected="${role == 'Student'}">Học sinh</option>
+                    </select>
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="col-6 col-md-2">
+                    <label class="form-label small fw-bold mb-1"><i class="fas fa-toggle-on me-1 text-primary"></i>Trạng thái</label>
+                    <select name="status" class="form-select" id="statusSelect">
+                        <option value="" th:selected="${status == ''}">Tất cả</option>
+                        <option value="active" th:selected="${status == 'active'}">Hoạt động</option>
+                        <option value="locked" th:selected="${status == 'locked'}">Bị khóa</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill flex-fill px-3">
+                        <i class="fas fa-filter me-1"></i>Lọc
+                    </button>
+                    <a th:href="@{/admin/users}" class="btn btn-outline-secondary rounded-pill px-3" title="Xóa bộ lọc">
+                        <i class="fas fa-undo"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Active filter chips -->
+            <div class="mt-3 d-flex flex-wrap gap-2"
+                 th:if="${(search != null and !search.isEmpty()) or (role != null and !role.isEmpty()) or (status != null and !status.isEmpty())}">
+                <span class="stat-chip text-muted">Đang lọc:</span>
+                <span th:if="${search != null and !search.isEmpty()}" class="stat-chip">
+                    <i class="fas fa-search text-primary"></i>
+                    "<span th:text="${search}"></span>"
+                </span>
+                <span th:if="${role != null and !role.isEmpty()}" class="stat-chip">
+                    <i class="fas fa-user-tag text-primary"></i>
+                    <span th:text="${role == 'Admin' ? 'Admin' : role == 'Teacher' ? 'Giáo viên' : 'Học sinh'}"></span>
+                </span>
+                <span th:if="${status == 'active'}" class="stat-chip text-success">
+                    <i class="fas fa-check-circle"></i> Hoạt động
+                </span>
+                <span th:if="${status == 'locked'}" class="stat-chip text-secondary">
+                    <i class="fas fa-lock"></i> Bị khóa
+                </span>
+            </div>
+        </form>
+    </div>
+
+    <!-- ══ Table Panel ══ -->
     <div class="panel">
         <div th:if="${#lists.isEmpty(danhSach)}" class="text-center py-5 text-muted">
             <i class="fas fa-users fa-3x mb-3 d-block opacity-25"></i>
-            <p>Không có người dùng nào.</p>
+            <p class="mb-3">Không tìm thấy người dùng nào.</p>
+            <a th:href="@{/admin/users}" class="btn btn-outline-primary rounded-pill">
+                <i class="fas fa-undo me-1"></i>Xem tất cả
+            </a>
         </div>
+
         <div class="table-responsive" th:if="${!#lists.isEmpty(danhSach)}">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small fw-medium">
+                    Hiển thị <strong th:text="${#lists.size(danhSach)}"></strong> người dùng
+                </span>
+            </div>
+            <table class="table table-hover align-middle" id="usersTable">
+                <thead>
                     <tr>
-                        <th>#</th><th>Người dùng</th><th>Email</th><th>Vai trò</th>
-                        <th>Trạng thái</th><th>Ngày tạo</th><th class="text-center">Thao tác</th>
+                        <th style="width:44px">#</th>
+                        <th>Người dùng</th>
+                        <th>Email</th>
+                        <th style="width:110px">Vai trò</th>
+                        <th style="width:105px">Trạng thái</th>
+                        <th style="width:100px">Ngày tạo</th>
+                        <th class="text-center" style="width:200px">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="user, i : ${danhSach}">
-                        <td class="text-muted small" th:text="${i.count}"></td>
+                        <td class="text-muted small fw-medium" th:text="${i.count}"></td>
+
+                        <!-- Avatar + Name -->
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <div class="user-avatar" 
+                                <div class="user-avatar"
                                      th:classappend="${user.vaiTro.tenVaiTro == 'Admin' ? 'avatar-admin' : user.vaiTro.tenVaiTro == 'Teacher' ? 'avatar-teacher' : 'avatar-student'}"
-                                     th:text="${#strings.substring(user.hoTen, 0, 1)}"></div>
+                                     th:text="${user.hoTen != null and !user.hoTen.isEmpty() ? #strings.substring(user.hoTen,0,1).toUpperCase() : '?'}"></div>
                                 <div>
-                                    <div class="fw-medium" th:text="${user.hoTen}"></div>
+                                    <div class="fw-semibold small" th:text="${user.hoTen}"></div>
                                     <small class="text-muted" th:text="${'ID: ' + user.maNguoiDung}"></small>
                                 </div>
                             </div>
                         </td>
+
+                        <!-- Email -->
                         <td class="text-muted small" th:text="${user.email}"></td>
+
+                        <!-- Vai trò -->
                         <td>
-                            <span class="badge badge-status" 
-                                  th:classappend="${user.vaiTro.tenVaiTro == 'Admin' ? 'bg-danger' : user.vaiTro.tenVaiTro == 'Teacher' ? 'bg-info' : 'bg-success'}"
-                                  th:text="${user.vaiTro.tenVaiTro}"></span>
+                            <span class="badge badge-role"
+                                  th:classappend="${user.vaiTro.tenVaiTro == 'Admin' ? 'badge-admin' : user.vaiTro.tenVaiTro == 'Teacher' ? 'badge-teacher' : 'badge-student'}"
+                                  th:text="${user.vaiTro.tenVaiTro == 'Admin' ? 'Admin' : user.vaiTro.tenVaiTro == 'Teacher' ? 'Giáo viên' : 'Học sinh'}"></span>
                         </td>
+
+                        <!-- Trạng thái -->
                         <td>
-                            <span th:if="${user.trangThai}" class="badge bg-success badge-status">Hoạt động</span>
-                            <span th:unless="${user.trangThai}" class="badge bg-secondary badge-status">Bị khóa</span>
+                            <span th:if="${user.trangThai}"
+                                  class="badge badge-role badge-active">
+                                <i class="fas fa-circle me-1" style="font-size:.5rem;vertical-align:middle"></i>Hoạt động
+                            </span>
+                            <span th:unless="${user.trangThai}"
+                                  class="badge badge-role badge-locked">
+                                <i class="fas fa-lock me-1" style="font-size:.65rem"></i>Bị khóa
+                            </span>
                         </td>
-                        <td class="text-muted small" th:text="${user.ngayTao != null ? #temporals.format(user.ngayTao,'dd/MM/yyyy') : '—'}"></td>
+
+                        <!-- Ngày tạo -->
+                        <td class="text-muted small"
+                            th:text="${user.ngayTao != null ? #temporals.format(user.ngayTao,'dd/MM/yyyy') : '—'}"></td>
+
+                        <!-- Thao tác -->
                         <td class="text-center">
                             <div class="d-flex gap-1 justify-content-center flex-wrap">
-                                <a th:href="@{/admin/users/{id}/edit(id=${user.maNguoiDung})}"
-                                   class="btn action-btn btn-outline-primary"><i class="fas fa-edit"></i> Sửa</a>
+                                <!-- Khóa -->
                                 <form th:if="${user.trangThai}"
                                       th:action="@{/admin/users/{id}/lock(id=${user.maNguoiDung})}" method="post" style="display:inline">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                    <button type="submit" class="btn action-btn btn-outline-danger"
-                                            onclick="return confirm('Khóa tài khoản này?')">
+                                    <button type="submit" class="btn action-btn btn-outline-warning"
+                                            th:attr="onclick=|return confirm('Khóa tài khoản của ${user.hoTen}?')|">
                                         <i class="fas fa-lock"></i> Khóa
+                                    </button>
+                                </form>
+                                <!-- Mở khóa -->
+                                <form th:unless="${user.trangThai}"
+                                      th:action="@{/admin/users/{id}/unlock(id=${user.maNguoiDung})}" method="post" style="display:inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn action-btn btn-outline-success"
+                                            th:attr="onclick=|return confirm('Mở khóa tài khoản của ${user.hoTen}?')|">
+                                        <i class="fas fa-lock-open"></i> Mở khóa
+                                    </button>
+                                </form>
+                                <!-- Xóa -->
+                                <form th:action="@{/admin/users/{id}/delete(id=${user.maNguoiDung})}" method="post" style="display:inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button type="submit" class="btn action-btn btn-outline-danger"
+                                            th:attr="onclick=|return confirm('Xóa vĩnh viễn tài khoản của ${user.hoTen}? Hành động này không thể hoàn tác!')|">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -138,8 +273,42 @@
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Clear search field
+    function clearField(inputId, clearBtnId) {
+        document.getElementById(inputId).value = '';
+        document.getElementById(clearBtnId).style.display = 'none';
+        document.getElementById('filterForm').submit();
+    }
+
+    // Show clear button while typing
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn    = document.getElementById('clearSearch');
+    if (searchInput && clearBtn) {
+        searchInput.addEventListener('input', () => {
+            clearBtn.style.display = searchInput.value ? 'inline' : 'none';
+        });
+    }
+
+    // Auto-submit on select change
+    ['roleSelect', 'statusSelect'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', () => document.getElementById('filterForm').submit());
+    });
+
+    // Live client-side filter (instant feedback while typing)
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const kw = searchInput.value.toLowerCase().trim();
+            if (!kw) return; // let server do the full filter on submit
+            document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(kw) ? '' : 'none';
+            });
+        });
+    }
+</script>
 </body>
 </html>
-
-

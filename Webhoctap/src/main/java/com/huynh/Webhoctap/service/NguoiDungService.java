@@ -97,4 +97,33 @@ public class NguoiDungService {
     public List<NguoiDung> layTheoVaiTro(String tenVaiTro) {
         return nguoiDungRepository.findByVaiTro_TenVaiTro(tenVaiTro);
     }
+
+    // ── Tìm kiếm / lọc linh hoạt (Admin) ────────────────────────────────
+    public List<NguoiDung> timKiem(String keyword, String tenVaiTro, Boolean trangThai) {
+        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String role = (tenVaiTro != null && !tenVaiTro.isBlank()) ? tenVaiTro : null;
+        return nguoiDungRepository.timKiem(kw, role, trangThai);
+    }
+
+    // ── Thêm người dùng mới (Admin) ───────────────────────────────────────
+    @Transactional
+    public NguoiDung themNguoiDung(NguoiDung nguoiDung, String tenVaiTro) {
+        if (nguoiDungRepository.existsByEmail(nguoiDung.getEmail())) {
+            throw new RuntimeException("Email đã được sử dụng: " + nguoiDung.getEmail());
+        }
+        VaiTro vaiTro = vaiTroRepository.findByTenVaiTro(tenVaiTro)
+                .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại: " + tenVaiTro));
+        nguoiDung.setMatKhau(passwordEncoder.encode(nguoiDung.getMatKhau()));
+        nguoiDung.setVaiTro(vaiTro);
+        nguoiDung.setNgayTao(LocalDateTime.now());
+        nguoiDung.setTrangThai(true);
+        return nguoiDungRepository.save(nguoiDung);
+    }
+
+    // ── Xóa người dùng (Admin) ────────────────────────────────────────────
+    @Transactional
+    public void xoaNguoiDung(Integer id) {
+        NguoiDung nguoiDung = layTheoId(id);
+        nguoiDungRepository.delete(nguoiDung);
+    }
 }

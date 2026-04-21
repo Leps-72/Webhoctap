@@ -88,9 +88,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login", "/register")
                 )
+                // ── Cho phép iframe cùng nguồn gốc (cần thiết cho preview PDF/ảnh/video) ──
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("frame-ancestors 'self'")
+                        )
+                )
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
+
     }
 
     @Bean

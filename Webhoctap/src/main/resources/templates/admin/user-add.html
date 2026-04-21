@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Người Dùng - Admin - Webhoctap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{
+            --brand-from:#1a2a4a;--brand-to:#1d4ed8;
+            --accent:#3b82f6;--accent-dark:#1d4ed8;
+            --bg:#f0f4f8;
+        }
+        body{background:var(--bg);font-family:'Segoe UI',sans-serif;}
+        .sidebar{background:linear-gradient(160deg,var(--brand-from),var(--brand-to));min-height:100vh;width:240px;position:fixed;top:0;left:0;z-index:100;padding-top:20px;}
+        .sidebar .brand{color:#fff;font-size:1.3rem;font-weight:700;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:10px;}
+        .sidebar .nav-link{color:rgba(255,255,255,.8);padding:10px 20px;border-radius:8px;margin:2px 10px;transition:.2s;display:flex;align-items:center;gap:10px;}
+        .sidebar .nav-link:hover,.sidebar .nav-link.active{background:rgba(255,255,255,.15);color:#fff;}
+        .sidebar .nav-link i{width:20px;text-align:center;}
+        .sidebar .section-label{color:rgba(255,255,255,.45);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;padding:12px 20px 4px;}
+        .main-content{margin-left:240px;padding:30px;}
+        .topbar{background:#fff;border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+        .card-form{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:36px 40px;max-width:620px;margin:0 auto;}
+        .form-label{font-weight:600;font-size:.88rem;color:#374151;}
+        .form-control,.form-select{border-radius:10px;border:1.5px solid #e5e7eb;padding:10px 14px;font-size:.9rem;transition:.2s;}
+        .form-control:focus,.form-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+        .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:10px;padding:11px 32px;font-weight:600;font-size:.95rem;transition:.2s;}
+        .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);}
+        .avatar-preview{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-dark));margin:0 auto 12px;transition:.3s;}
+        .strength-bar{height:5px;border-radius:4px;margin-top:6px;transition:.4s;background:#e5e7eb;}
+        .strength-bar.weak{background:#ef4444;width:33%;}
+        .strength-bar.medium{background:#f59e0b;width:66%;}
+        .strength-bar.strong{background:#22c55e;width:100%;}
+        .field-group{position:relative;}
+        .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;background:none;border:none;padding:0;}
+        .toggle-pw:hover{color:#374151;}
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="brand"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+    <div class="section-label">Quản lý</div>
+    <a th:href="@{/admin/dashboard}" class="nav-link"><i class="fas fa-tachometer-alt"></i> Bảng điều khiển</a>
+    <a th:href="@{/admin/users}" class="nav-link active"><i class="fas fa-users"></i> Người dùng</a>
+    <a th:href="@{/admin/courses}" class="nav-link"><i class="fas fa-book-open"></i> Khóa học</a>
+    <a th:href="@{/admin/materials}" class="nav-link"><i class="fas fa-file-alt"></i> Học liệu</a>
+    <div class="section-label">Tài khoản</div>
+    <form method="POST" th:action="@{/logout}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="nav-link border-0 w-100 text-start" style="background:none;cursor:pointer;">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </button>
+    </form>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+    <div class="topbar">
+        <div>
+            <h5 class="mb-0 fw-bold"><i class="fas fa-user-plus text-primary me-2"></i>Thêm Người Dùng Mới</h5>
+            <small class="text-muted">Tạo tài khoản mới cho hệ thống</small>
+        </div>
+        <a th:href="@{/admin/users}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" style="max-width:620px;margin:0 auto 20px;">
+        <i class="fas fa-exclamation-circle me-2"></i><span th:text="${errorMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card-form">
+        <!-- Avatar preview -->
+        <div class="text-center mb-4">
+            <div class="avatar-preview" id="avatarPreview">
+                <i class="fas fa-user"></i>
+            </div>
+            <small class="text-muted">Ký tự đầu tên sẽ hiển thị</small>
+        </div>
+
+        <form th:action="@{/admin/users/add}" method="post" id="addUserForm" novalidate>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="row g-3">
+                <!-- Họ tên -->
+                <div class="col-12">
+                    <label class="form-label" for="hoTen"><i class="fas fa-user me-1 text-primary"></i>Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="hoTen" name="hoTen"
+                           placeholder="Nguyễn Văn A" required minlength="2" autocomplete="name">
+                    <div class="invalid-feedback">Vui lòng nhập họ tên (ít nhất 2 ký tự).</div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-12">
+                    <label class="form-label" for="email"><i class="fas fa-envelope me-1 text-primary"></i>Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="email@example.com" required autocomplete="email">
+                    <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                </div>
+
+                <!-- Mật khẩu -->
+                <div class="col-12">
+                    <label class="form-label" for="matKhau"><i class="fas fa-lock me-1 text-primary"></i>Mật khẩu <span class="text-danger">*</span></label>
+                    <div class="field-group">
+                        <input type="password" class="form-control" id="matKhau" name="matKhau"
+                               placeholder="Tối thiểu 6 ký tự" required minlength="6" autocomplete="new-password">
+                        <button type="button" class="toggle-pw" onclick="togglePassword('matKhau','togglePwIcon')">
+                            <i class="fas fa-eye" id="togglePwIcon"></i>
+                        </button>
+                    </div>
+                    <div class="strength-bar mt-2" id="strengthBar"></div>
+                    <small class="text-muted" id="strengthLabel"></small>
+                    <div class="invalid-feedback">Mật khẩu phải có ít nhất 6 ký tự.</div>
+                </div>
+
+                <!-- Số điện thoại -->
+                <div class="col-md-6">
+                    <label class="form-label" for="soDienThoai"><i class="fas fa-phone me-1 text-primary"></i>Số điện thoại</label>
+                    <input type="tel" class="form-control" id="soDienThoai" name="soDienThoai"
+                           placeholder="0912345678" autocomplete="tel">
+                </div>
+
+                <!-- Vai trò -->
+                <div class="col-md-6">
+                    <label class="form-label" for="vaiTro"><i class="fas fa-user-tag me-1 text-primary"></i>Vai trò <span class="text-danger">*</span></label>
+                    <select class="form-select" id="vaiTro" name="vaiTro" required>
+                        <option value="">-- Chọn vai trò --</option>
+                        <option value="Student">Học sinh</option>
+                        <option value="Teacher">Giáo viên</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                    <div class="invalid-feedback">Vui lòng chọn vai trò.</div>
+                </div>
+
+                <!-- Submit -->
+                <div class="col-12 mt-3 d-flex gap-3">
+                    <button type="submit" class="btn btn-primary px-5" id="submitBtn">
+                        <i class="fas fa-user-plus me-2"></i>Thêm người dùng
+                    </button>
+                    <a th:href="@{/admin/users}" class="btn btn-outline-secondary px-4 rounded-3">
+                        Hủy
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Avatar preview
+    const hoTenInput = document.getElementById('hoTen');
+    const avatarPreview = document.getElementById('avatarPreview');
+    hoTenInput.addEventListener('input', () => {
+        const val = hoTenInput.value.trim();
+        if (val) {
+            avatarPreview.innerHTML = val.charAt(0).toUpperCase();
+        } else {
+            avatarPreview.innerHTML = '<i class="fas fa-user"></i>';
+        }
+    });
+
+    // Password strength
+    const matKhauInput = document.getElementById('matKhau');
+    const strengthBar   = document.getElementById('strengthBar');
+    const strengthLabel = document.getElementById('strengthLabel');
+    matKhauInput.addEventListener('input', () => {
+        const pw = matKhauInput.value;
+        let score = 0;
+        if (pw.length >= 6)  score++;
+        if (pw.length >= 10) score++;
+        if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
+        strengthBar.className = 'strength-bar mt-2 ' + ['', 'weak', 'medium', 'strong'][score];
+        strengthLabel.textContent = ['', 'Yếu', 'Trung bình', 'Mạnh'][score];
+        strengthLabel.style.color = ['', '#ef4444', '#f59e0b', '#22c55e'][score];
+    });
+
+    // Toggle password visibility
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon  = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // Bootstrap validation
+    document.getElementById('addUserForm').addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+</script>
+</body>
+</html>

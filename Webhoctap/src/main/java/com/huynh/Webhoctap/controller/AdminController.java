@@ -51,10 +51,56 @@ public class AdminController {
     // QUẢN LÝ NGƯỜI DÙNG
     // ══════════════════════════════════════════════════════════════════════
 
+    /** Danh sách + tìm kiếm / lọc */
     @GetMapping("/users")
-    public String danhSachNguoiDung(Model model) {
-        model.addAttribute("danhSach", nguoiDungService.layTatCa());
+    public String danhSachNguoiDung(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            Model model) {
+
+        Boolean trangThai = null;
+        if ("active".equals(status))   trangThai = true;
+        if ("locked".equals(status))   trangThai = false;
+
+        var danhSach = nguoiDungService.timKiem(search, role, trangThai);
+
+        model.addAttribute("danhSach", danhSach);
+        model.addAttribute("search",   search  != null ? search  : "");
+        model.addAttribute("role",     role    != null ? role    : "");
+        model.addAttribute("status",   status  != null ? status  : "");
         return "admin/users";
+    }
+
+    /** Form thêm người dùng mới */
+    @GetMapping("/users/add")
+    public String formThemNguoiDung(Model model) {
+        model.addAttribute("nguoiDung", new com.huynh.Webhoctap.model.NguoiDung());
+        return "admin/user-add";
+    }
+
+    /** Xử lý thêm người dùng mới */
+    @PostMapping("/users/add")
+    public String themNguoiDung(
+            @RequestParam String hoTen,
+            @RequestParam String email,
+            @RequestParam String matKhau,
+            @RequestParam String vaiTro,
+            @RequestParam(required = false) String soDienThoai,
+            RedirectAttributes ra) {
+        try {
+            com.huynh.Webhoctap.model.NguoiDung nd = new com.huynh.Webhoctap.model.NguoiDung();
+            nd.setHoTen(hoTen);
+            nd.setEmail(email);
+            nd.setMatKhau(matKhau);
+            nd.setSoDienThoai(soDienThoai);
+            nguoiDungService.themNguoiDung(nd, vaiTro);
+            ra.addFlashAttribute("successMsg", "Đã thêm người dùng: " + email);
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("errorMsg", e.getMessage());
+            return "redirect:/admin/users/add";
+        }
+        return "redirect:/admin/users";
     }
 
     // Khoá tài khoản
@@ -91,6 +137,18 @@ public class AdminController {
             ra.addFlashAttribute("successMsg", "Đã cập nhật vai trò.");
         } catch (RuntimeException e) {
             ra.addFlashAttribute("errorMsg", e.getMessage());
+        }
+        return "redirect:/admin/users";
+    }
+
+    // Xóa người dùng
+    @PostMapping("/users/{id}/delete")
+    public String xoaNguoiDung(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            nguoiDungService.xoaNguoiDung(id);
+            ra.addFlashAttribute("successMsg", "Đã xóa người dùng.");
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("errorMsg", "Không thể xóa: " + e.getMessage());
         }
         return "redirect:/admin/users";
     }
