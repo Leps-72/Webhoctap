@@ -1,6 +1,7 @@
 package com.huynh.Webhoctap.controller;
 
 import com.huynh.Webhoctap.dto.QuizSubmitDto;
+import com.huynh.Webhoctap.model.ChiTietKetQua;
 import com.huynh.Webhoctap.model.NguoiDung;
 import com.huynh.Webhoctap.service.*;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -205,6 +207,17 @@ public class StudentController {
         model.addAttribute("ketQua",  ketQua);
         model.addAttribute("quiz",    quizService.layTheoId(quizId));
         model.addAttribute("cauHois", quizService.layCauHoiCuaQuiz(quizId));
+
+        // Lấy chi tiết kết quả (nếu có)
+        List<ChiTietKetQua> chiTietList = ketQuaQuizService.layChiTietKetQua(ketQua);
+        Map<Integer, Integer> luaChonDaChon = new HashMap<>();
+        for (com.huynh.Webhoctap.model.ChiTietKetQua ct : chiTietList) {
+            if (ct.getLuaChonChon() != null) {
+                luaChonDaChon.put(ct.getCauHoi().getMaCauHoi(), ct.getLuaChonChon().getMaLuaChon());
+            }
+        }
+        model.addAttribute("luaChonDaChon", luaChonDaChon);
+
         return "student/quiz-result";
     }
 

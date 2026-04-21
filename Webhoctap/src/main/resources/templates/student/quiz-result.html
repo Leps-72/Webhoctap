@@ -66,10 +66,19 @@
                 <small class="text-muted ms-2 text-nowrap" th:text="${ch.diem} + 'đ'"></small>
             </div>
             <div th:each="lc : ${ch.luaChons}">
-                <div th:class="${lc.laDapAnDung} ? 'lc-opt is-correct' : 'lc-opt'">
-                    <i th:class="${lc.laDapAnDung} ? 'fas fa-check-circle text-success' : 'far fa-circle text-muted'" style="font-size:.75rem;"></i>
-                    <span th:text="${lc.noiDung}"></span>
-                    <span th:if="${lc.laDapAnDung}" class="badge bg-success ms-auto" style="font-size:.65rem;">Đúng</span>
+                <div th:with="isSelected=${luaChonDaChon != null and luaChonDaChon.get(ch.maCauHoi) != null and luaChonDaChon.get(ch.maCauHoi).equals(lc.maLuaChon)}"
+                     th:class="${lc.laDapAnDung} ? 'lc-opt is-correct' : (${isSelected} ? 'lc-opt is-wrong' : 'lc-opt')"
+                     th:style="${isSelected and !lc.laDapAnDung} ? 'background:#fee2e2; border:1px solid #fca5a5;' : ''">
+                    <i th:if="${lc.laDapAnDung}" class="fas fa-check-circle text-success" style="font-size:.75rem;"></i>
+                    <i th:if="${isSelected and !lc.laDapAnDung}" class="fas fa-times-circle text-danger" style="font-size:.75rem;"></i>
+                    <i th:if="${!lc.laDapAnDung and !isSelected}" class="far fa-circle text-muted" style="font-size:.75rem;"></i>
+                    
+                    <span th:text="${lc.noiDung}" th:classappend="${isSelected and !lc.laDapAnDung} ? 'text-danger fw-bold' : ''"></span>
+                    
+                    <div class="ms-auto d-flex gap-1">
+                        <span th:if="${isSelected}" class="badge bg-primary" style="font-size:.65rem;"><i class="fas fa-user me-1"></i>Bạn chọn</span>
+                        <span th:if="${lc.laDapAnDung}" class="badge bg-success" style="font-size:.65rem;">Đáp án đúng</span>
+                    </div>
                 </div>
             </div>
         </div>

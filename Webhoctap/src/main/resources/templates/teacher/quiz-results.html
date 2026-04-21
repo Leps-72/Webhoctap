@@ -1,117 +1,100 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'Kết quả: ' + ${quiz.tenQuiz} + ' - Webhoctap'">Kết quả Quiz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Kết quả: ' + ${quiz.tenQuiz}">Kết quả Quiz</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        body{background:#f0f4f8;font-family:'Segoe UI',sans-serif;}
-        .sidebar{background:linear-gradient(160deg,#1a4731,#2e7d52);min-height:100vh;width:240px;position:fixed;top:0;left:0;z-index:100;padding-top:20px;}
-        .sidebar .brand{color:#fff;font-size:1.3rem;font-weight:700;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:10px;}
-        .sidebar .nav-link{color:rgba(255,255,255,.8);padding:10px 20px;border-radius:8px;margin:2px 10px;transition:.2s;display:flex;align-items:center;gap:10px;}
-        .sidebar .nav-link:hover,.sidebar .nav-link.active{background:rgba(255,255,255,.15);color:#fff;}
-        .sidebar .nav-link i{width:20px;text-align:center;}
-        .sidebar .section-label{color:rgba(255,255,255,.45);font-size:.7rem;text-transform:uppercase;letter-spacing:1px;padding:12px 20px 4px;}
-        .main-content{margin-left:240px;padding:30px;}
-        .topbar{background:#fff;border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-        .stat-card{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.07);text-align:center;}
-        .stat-val{font-size:2rem;font-weight:700;}
-        .panel{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:24px;}
-        .table th{font-size:.8rem;text-transform:uppercase;color:#6b7280;}
+        .topbar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .score-badge { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .score-pass { background: #d1fae5; color: #065f46; }
+        .score-fail { background: #fee2e2; color: #991b1b; }
+        .table-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body>
-<div class="sidebar">
-    <div class="brand"><i class="fas fa-graduation-cap"></i> Webhoctap</div>
-    <div class="section-label">Tổng quan</div>
-    <a th:href="@{/teacher/dashboard}" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
-    <div class="section-label">Nội dung</div>
-    <a th:href="@{/teacher/courses}" class="nav-link"><i class="fas fa-book-open"></i> Khóa học</a>
-    <a th:href="@{/teacher/quizzes}" class="nav-link active"><i class="fas fa-clipboard-list"></i> Quiz</a>
-    <a th:href="@{/teacher/materials}" class="nav-link"><i class="fas fa-file-alt"></i> Học liệu</a>
-    <div class="section-label">Câu hỏi</div>
-    <a th:href="@{/teacher/question-bank}" class="nav-link"><i class="fas fa-database"></i> Ngân hàng câu hỏi</a>
-    <div class="section-label">Tài khoản</div>
-    <form method="POST" th:action="@{/logout}">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="nav-link border-0 w-100 text-start" style="background:none;cursor:pointer;">
-            <i class="fas fa-sign-out-alt"></i> Đăng xuất
-        </button>
-    </form>
-</div>
-<div class="main-content">
-    <div class="topbar">
-        <div>
-            <h5 class="mb-0 fw-bold"><i class="fas fa-chart-bar text-info me-2"></i>Kết quả Quiz</h5>
-            <small class="text-muted" th:text="${quiz.tenQuiz} + ' · ' + #lists.size(ketQuas) + ' lượt làm'"></small>
-        </div>
-        <a th:href="@{/teacher/quizzes}" class="btn btn-outline-secondary rounded-pill">
-            <i class="fas fa-arrow-left me-1"></i> Quay lại
-        </a>
+<body class="bg-light">
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-white p-3 vh-100 position-fixed" style="width: 250px;">
+        <h4 class="text-center mb-4 text-uppercase fw-bold mt-2" style="letter-spacing: 1px;">
+            <i class="fas fa-graduation-cap text-primary"></i> Giáo viên
+        </h4>
+        <ul class="nav flex-column gap-2">
+            <li class="nav-item"><a th:href="@{/teacher/dashboard}" class="nav-link text-white rounded"><i class="fas fa-home me-2"></i> Dashboard</a></li>
+            <li class="nav-item"><a th:href="@{/teacher/courses}" class="nav-link text-white rounded"><i class="fas fa-book me-2"></i> Khóa học</a></li>
+            <li class="nav-item"><a th:href="@{/teacher/quizzes}" class="nav-link bg-primary text-white rounded shadow-sm"><i class="fas fa-question-circle me-2"></i> Quản lý Quiz</a></li>
+            <li class="nav-item"><a th:href="@{/teacher/materials}" class="nav-link text-white rounded"><i class="fas fa-file-alt me-2"></i> Học liệu</a></li>
+        </ul>
     </div>
 
-    <!-- Stats -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-val text-primary" th:text="${#lists.size(ketQuas)}">0</div>
-                <div class="text-muted small">Lượt làm bài</div>
+    <!-- Main Content -->
+    <div class="flex-grow-1" style="margin-left: 250px;">
+        <div class="topbar">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-chart-bar text-info me-2"></i> Kết quả: <span th:text="${quiz.tenQuiz}" class="text-primary"></span></h5>
+            <div class="d-flex gap-2">
+                <a th:href="@{/teacher/quizzes}" class="btn btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i> Quay lại</a>
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Đăng xuất</button>
+                </form>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-val text-success" th:text="${trungBinh}">0</div>
-                <div class="text-muted small">Điểm trung bình</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-val text-info" th:text="${caoNhat}">0</div>
-                <div class="text-muted small">Điểm cao nhất</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="stat-val text-warning" th:text="${thapNhat}">0</div>
-                <div class="text-muted small">Điểm thấp nhất</div>
-            </div>
-        </div>
-    </div>
 
-    <div class="panel">
-        <h6 class="fw-bold mb-3">Chi tiết kết quả sinh viên</h6>
-        <div th:if="${#lists.isEmpty(ketQuas)}" class="text-center text-muted py-5">
-            <i class="fas fa-chart-bar fa-3x mb-2 d-block opacity-25"></i>
-            Chưa có sinh viên nào làm bài.
-        </div>
-        <div class="table-responsive" th:if="${!#lists.isEmpty(ketQuas)}">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr><th>#</th><th>Sinh viên</th><th>Email</th><th>Điểm</th><th>Bắt đầu</th><th>Kết thúc</th><th>Thời gian làm</th></tr>
-                </thead>
-                <tbody>
-                    <tr th:each="kq, i : ${ketQuas}">
-                        <td class="text-muted" th:text="${i.count}"></td>
-                        <td class="fw-medium" th:text="${kq.hocSinh.hoTen}"></td>
-                        <td class="text-muted small" th:text="${kq.hocSinh.email}"></td>
-                        <td>
-                            <span class="badge rounded-pill px-3"
-                                  th:classappend="${kq.diem >= 5} ? 'bg-success' : 'bg-danger'"
-                                  th:text="${kq.diem}"></span>
-                        </td>
-                        <td class="small" th:text="${kq.thoiGianBatDau != null ? #temporals.format(kq.thoiGianBatDau,'dd/MM HH:mm') : '—'}"></td>
-                        <td class="small" th:text="${kq.thoiGianKetThuc != null ? #temporals.format(kq.thoiGianKetThuc,'dd/MM HH:mm') : '—'}"></td>
-                        <td class="small text-muted">
-                            <span th:if="${kq.thoiGianBatDau != null and kq.thoiGianKetThuc != null}"
-                                  th:text="${T(java.time.Duration).between(kq.thoiGianBatDau,kq.thoiGianKetThuc).toMinutes()} + ' phút'"></span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="p-4">
+            <div class="table-card mt-3">
+                <div th:if="${#lists.isEmpty(danhSachKetQua)}" class="text-center py-5 text-muted">
+                    <i class="fas fa-users-slash fa-3x mb-3 opacity-25"></i>
+                    <p>Chưa có học sinh nào nộp bài cho Quiz này.</p>
+                </div>
+                
+                <div class="table-responsive" th:if="${!#lists.isEmpty(danhSachKetQua)}">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Học sinh</th>
+                                <th>Email</th>
+                                <th class="text-center">Điểm số</th>
+                                <th>Bắt đầu</th>
+                                <th>Nộp bài</th>
+                                <th>Thời gian làm</th>
+                                <th class="text-center">Chi tiết</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="kq : ${danhSachKetQua}">
+                                <td class="fw-bold" th:text="${kq.hocSinh.hoTen}"></td>
+                                <td class="text-muted small" th:text="${kq.hocSinh.email}"></td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <div th:class="${kq.diem >= 5 ? 'score-badge score-pass' : 'score-badge score-fail'}"
+                                             th:text="${kq.diem}"></div>
+                                    </div>
+                                </td>
+                                <td class="small" th:text="${kq.thoiGianBatDau != null ? #temporals.format(kq.thoiGianBatDau,'dd/MM HH:mm') : '—'}"></td>
+                                <td class="small" th:text="${kq.thoiGianKetThuc != null ? #temporals.format(kq.thoiGianKetThuc,'dd/MM HH:mm') : '—'}"></td>
+                                <td class="small text-muted">
+                                    <span th:if="${kq.thoiGianBatDau != null and kq.thoiGianKetThuc != null}"
+                                          th:text="${T(java.time.Duration).between(kq.thoiGianBatDau, kq.thoiGianKetThuc).toMinutes()} + ' phút'"></span>
+                                </td>
+                                <td class="text-center">
+                                    <a th:href="@{/teacher/quizzes/{qid}/results/{kid}(qid=${quiz.maQuiz}, kid=${kq.maKetQua})}" 
+                                       class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <i class="fas fa-eye"></i> Xem
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

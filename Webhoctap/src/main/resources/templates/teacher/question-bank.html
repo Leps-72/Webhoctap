@@ -108,6 +108,8 @@
                               th:text="${ch.doKho == 'De' ? 'Dễ' : (ch.doKho == 'Kho' ? 'Khó' : 'Trung bình')}"></span>
                         <span class="badge bg-light text-dark border" th:if="${ch.chuDe != null}" th:text="'📚 ' + ${ch.chuDe}"></span>
                         <span class="badge bg-light text-dark border" th:text="${ch.diem} + ' điểm'"></span>
+                        <span class="badge" style="background:#e0e7ff;color:#4338ca;border:1px solid #c7d2fe;" th:if="${ch.quiz != null}" th:text="'📝 Quiz: ' + ${ch.quiz.tenQuiz}"></span>
+                        <span class="badge bg-light text-secondary border" th:if="${ch.quiz == null}"><i class="fas fa-database me-1"></i>Ngân hàng</span>
                     </div>
                     <div th:each="lc : ${ch.luaChons}">
                         <div th:class="${lc.laDapAnDung} ? 'ans-opt correct' : 'ans-opt'">

@@ -139,6 +139,7 @@
                                 <td th:text="${q.thoiGianLamBai} + ' phút'"></td>
                                 <td>
                                     <div class="d-flex gap-1 justify-content-end">
+                                        <a th:href="@{/teacher/quizzes/{id}/results(id=${q.maQuiz})}" class="btn btn-sm btn-outline-info rounded-pill">Kết quả</a>
                                         <a th:href="@{/teacher/quizzes/{id}/edit(id=${q.maQuiz})}" class="btn btn-sm btn-outline-primary rounded-pill">Sửa</a>
                                         <form th:action="@{/teacher/quizzes/{id}/delete(id=${q.maQuiz})}" method="post" onsubmit="return confirm('Xóa quiz này?')">
                                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

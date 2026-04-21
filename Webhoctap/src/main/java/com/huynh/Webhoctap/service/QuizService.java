@@ -137,22 +137,22 @@ public class QuizService {
 
     // ── Lấy toàn bộ ngân hàng câu hỏi của teacher ────────────────────────
     public List<CauHoi> layNganHangCuaGiaoVien(NguoiDung giaoVien) {
-        return cauHoiRepository.findByNguonGocAndGiaoVienNganHang("NganHang", giaoVien);
+        return cauHoiRepository.findTatCaCauHoiCuaGiaoVien(giaoVien);
     }
 
-    // ── Lọc ngân hàng theo chủ đề và/hoặc độ khó ─────────────────────────
     public List<CauHoi> layNganHangVoiFilter(NguoiDung giaoVien, String chuDe, String doKho) {
         boolean hasChuDe = chuDe != null && !chuDe.isBlank();
         boolean hasDoKho = doKho != null && !doKho.isBlank();
+
         if (hasChuDe && hasDoKho) {
-            return cauHoiRepository.findByNguonGocAndGiaoVienNganHangAndChuDeAndDoKho(
-                    "NganHang", giaoVien, chuDe, doKho);
+            return cauHoiRepository.findCauHoiCuaGiaoVienTheoChuDeAndDoKho(
+                    giaoVien, chuDe, doKho);
         } else if (hasChuDe) {
-            return cauHoiRepository.findByNguonGocAndGiaoVienNganHangAndChuDe(
-                    "NganHang", giaoVien, chuDe);
+            return cauHoiRepository.findCauHoiCuaGiaoVienTheoChuDe(
+                    giaoVien, chuDe);
         } else if (hasDoKho) {
-            return cauHoiRepository.findByNguonGocAndGiaoVienNganHangAndDoKho(
-                    "NganHang", giaoVien, doKho);
+            return cauHoiRepository.findCauHoiCuaGiaoVienTheoDoKho(
+                    giaoVien, doKho);
         }
         return layNganHangCuaGiaoVien(giaoVien);
     }

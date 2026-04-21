@@ -24,6 +24,7 @@ public class KetQuaQuizService {
     private final CauHoiRepository cauHoiRepository;
     private final LuaChonRepository luaChonRepository;
     private final QuizService quizService;
+    private final com.huynh.Webhoctap.repository.ChiTietKetQuaRepository chiTietKetQuaRepository;
 
     /**
      * Nộp bài làm và tính điểm tự động.
@@ -48,7 +49,9 @@ public class KetQuaQuizService {
                         .map(LuaChon::getLaDapAnDung)
                         .orElse(false);
                 if (dungDapAn) {
-                    tongDiem += cauHoi.getDiem();
+                    if (cauHoi.getDiem() != null) {
+                        tongDiem += cauHoi.getDiem();
+                    }
                 }
             }
         }
@@ -59,7 +62,21 @@ public class KetQuaQuizService {
         ketQua.setDiem(tongDiem);
         ketQua.setThoiGianBatDau(batDau);
         ketQua.setThoiGianKetThuc(LocalDateTime.now());
-        return ketQuaQuizRepository.save(ketQua);
+        ketQua = ketQuaQuizRepository.save(ketQua);
+
+        // Lưu chi tiết từng câu hỏi học sinh đã chọn
+        for (CauHoi cauHoi : danhSachCauHoi) {
+            Integer maLuaChonChon = dapAn.get(cauHoi.getMaCauHoi());
+            com.huynh.Webhoctap.model.ChiTietKetQua chiTiet = new com.huynh.Webhoctap.model.ChiTietKetQua();
+            chiTiet.setKetQuaQuiz(ketQua);
+            chiTiet.setCauHoi(cauHoi);
+            if (maLuaChonChon != null) {
+                luaChonRepository.findById(maLuaChonChon).ifPresent(chiTiet::setLuaChonChon);
+            }
+            chiTietKetQuaRepository.save(chiTiet);
+        }
+
+        return ketQua;
     }
 
     // ── Lịch sử làm bài của học sinh ─────────────────────────────────────
@@ -88,5 +105,9 @@ public class KetQuaQuizService {
     public KetQuaQuiz layTheoId(Integer id) {
         return ketQuaQuizRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy kết quả ID: " + id));
+    }
+
+    public List<com.huynh.Webhoctap.model.ChiTietKetQua> layChiTietKetQua(KetQuaQuiz ketQua) {
+        return chiTietKetQuaRepository.findByKetQuaQuiz(ketQua);
     }
 }

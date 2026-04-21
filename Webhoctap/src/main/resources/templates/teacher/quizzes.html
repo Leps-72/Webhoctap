@@ -86,6 +86,8 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex gap-1 justify-content-center flex-wrap">
+                                <a th:href="@{/teacher/quizzes/{id}/results(id=${q.maQuiz})}"
+                                   class="btn action-btn btn-outline-info"><i class="fas fa-chart-bar"></i> Kết quả</a>
                                 <a th:href="@{/teacher/quizzes/{id}/edit(id=${q.maQuiz})}"
                                    class="btn action-btn btn-outline-primary"><i class="fas fa-edit"></i> Sửa</a>
                                 <form th:action="@{/teacher/quizzes/{id}/delete(id=${q.maQuiz})}" method="post" style="display:inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa Quiz này không?')">

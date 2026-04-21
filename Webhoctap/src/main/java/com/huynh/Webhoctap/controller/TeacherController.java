@@ -249,6 +249,55 @@ public class TeacherController {
         }
     }
 
+    // ── KẾT QUẢ CỦA QUIZ (Teacher xem) ──────────────────────────────────
+    @GetMapping("/quizzes/{id}/results")
+    public String danhSachKetQua(@PathVariable Integer id, @AuthenticationPrincipal UserDetails ud, Model model) {
+        Quiz quiz = quizService.layTheoId(id);
+        // Kiểm tra quyền sở hữu
+        if (!quiz.getGiaoVien().getMaNguoiDung().equals(getCurrentUser(ud).getMaNguoiDung())) {
+            return "redirect:/teacher/quizzes";
+        }
+        model.addAttribute("quiz", quiz);
+        List<KetQuaQuiz> ketQuas = ketQuaQuizService.layKetQuaCuaQuiz(id);
+        model.addAttribute("danhSachKetQua", ketQuas);
+        
+        double trungBinh = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).average().orElse(0);
+        double caoNhat  = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).max().orElse(0);
+        double thapNhat = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).min().orElse(0);
+        model.addAttribute("trungBinh", String.format("%.1f", trungBinh));
+        model.addAttribute("caoNhat",  String.format("%.1f", caoNhat));
+        model.addAttribute("thapNhat", String.format("%.1f", thapNhat));
+
+        return "teacher/quiz-results";
+    }
+
+    @GetMapping("/quizzes/{quizId}/results/{ketQuaId}")
+    public String xemChiTietKetQua(@PathVariable Integer quizId, @PathVariable Integer ketQuaId,
+                                   @AuthenticationPrincipal UserDetails ud, Model model) {
+        Quiz quiz = quizService.layTheoId(quizId);
+        // Kiểm tra quyền
+        if (!quiz.getGiaoVien().getMaNguoiDung().equals(getCurrentUser(ud).getMaNguoiDung())) {
+            return "redirect:/teacher/quizzes";
+        }
+
+        KetQuaQuiz ketQua = ketQuaQuizService.layTheoId(ketQuaId);
+        model.addAttribute("ketQua", ketQua);
+        model.addAttribute("quiz", quiz);
+        model.addAttribute("cauHois", quizService.layCauHoiCuaQuiz(quizId));
+
+        // Lấy chi tiết chọn lựa
+        java.util.List<ChiTietKetQua> chiTietList = ketQuaQuizService.layChiTietKetQua(ketQua);
+        java.util.Map<Integer, Integer> luaChonDaChon = new java.util.HashMap<>();
+        for (ChiTietKetQua ct : chiTietList) {
+            if (ct.getLuaChonChon() != null) {
+                luaChonDaChon.put(ct.getCauHoi().getMaCauHoi(), ct.getLuaChonChon().getMaLuaChon());
+            }
+        }
+        model.addAttribute("luaChonDaChon", luaChonDaChon);
+
+        return "teacher/quiz-result-detail";
+    }
+
     @GetMapping("/quizzes/{id}/edit")
     public String formSuaQuiz(@PathVariable Integer id,
                               @AuthenticationPrincipal UserDetails ud, Model model) {
@@ -508,22 +557,6 @@ public class TeacherController {
         return "redirect:/teacher/quizzes";
     }
 
-    @GetMapping("/quizzes/{id}/results")
-    public String xemKetQua(@PathVariable Integer id,
-                            @AuthenticationPrincipal UserDetails ud, Model model) {
-        Quiz quiz = quizService.layTheoId(id);
-        List<KetQuaQuiz> ketQuas = ketQuaQuizService.layKetQuaCuaQuiz(id);
-        double trungBinh = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).average().orElse(0);
-        double caoNhat  = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).max().orElse(0);
-        double thapNhat = ketQuas.stream().mapToDouble(KetQuaQuiz::getDiem).min().orElse(0);
-        model.addAttribute("quiz", quiz);
-        model.addAttribute("ketQuas", ketQuas);
-        model.addAttribute("trungBinh", String.format("%.1f", trungBinh));
-        model.addAttribute("caoNhat",  String.format("%.1f", caoNhat));
-        model.addAttribute("thapNhat", String.format("%.1f", thapNhat));
-        model.addAttribute("cauHois", quizService.layCauHoiCuaQuiz(id));
-        return "teacher/quiz-results";
-    }
 
     // ══ NGÂN HÀNG CÂU HỎI ═════════════════════════════════════════════════
     @GetMapping("/question-bank")
