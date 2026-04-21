@@ -114,4 +114,8 @@ public class HocLieuService {
     public List<HocLieu> layTatCaChoAdmin() {
         return hocLieuRepository.findAll();
     }
+
+    public List<HocLieu> layCuaKhoaHoc(Integer maKhoaHoc) {
+        return hocLieuRepository.findByKhoaHoc_MaKhoaHocAndDaDuyet(maKhoaHoc, true);
+    }
 }

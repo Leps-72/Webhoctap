@@ -20,6 +20,7 @@ public class AdminController {
     private final NguoiDungService nguoiDungService;
     private final KhoaHocService khoaHocService;
     private final HocLieuService hocLieuService;
+    private final com.huynh.Webhoctap.service.ActivityService activityService;
 
     // ── Helper: lấy NguoiDung đang đăng nhập ─────────────────────────────
     private NguoiDung getCurrentUser(UserDetails userDetails) {
@@ -33,10 +34,16 @@ public class AdminController {
 
     @GetMapping({"/", "/dashboard"})
     public String dashboard(Model model) {
-        model.addAttribute("tongNguoiDung", nguoiDungService.layTatCa().size());
-        model.addAttribute("tongKhoaHoc",   khoaHocService.layTatCaChoAdmin().size());
-        model.addAttribute("choDuyet",      khoaHocService.layChooDuyet().size());
-        model.addAttribute("tongHocLieu",   hocLieuService.layTatCaChoAdmin().size());
+        var users = nguoiDungService.layTatCa();
+        var coursesAll = khoaHocService.layTatCaChoAdmin();
+        var coursesPending = khoaHocService.layChooDuyet();
+        var materialsAll = hocLieuService.layTatCaChoAdmin();
+
+        model.addAttribute("tongNguoiDung", users != null ? users.size() : 0);
+        model.addAttribute("tongKhoaHoc",   coursesAll != null ? coursesAll.size() : 0);
+        model.addAttribute("choDuyet",      coursesPending != null ? coursesPending.size() : 0);
+        model.addAttribute("tongHocLieu",   materialsAll != null ? materialsAll.size() : 0);
+        model.addAttribute("hoatDongGanDay", activityService.layHoatDongGanDay());
         return "admin/dashboard";
     }
 
@@ -94,9 +101,17 @@ public class AdminController {
 
     @GetMapping("/courses")
     public String danhSachKhoaHoc(Model model) {
-        model.addAttribute("tatCa",    khoaHocService.layTatCaChoAdmin());
-        model.addAttribute("choDuyet", khoaHocService.layChooDuyet());
+        var tatCa = khoaHocService.layTatCaChoAdmin();
+        var choDuyet = khoaHocService.layChooDuyet();
+        
+        model.addAttribute("tatCa",    tatCa != null ? tatCa : java.util.Collections.emptyList());
+        model.addAttribute("choDuyet", choDuyet != null ? choDuyet : java.util.Collections.emptyList());
         return "admin/courses";
+    }
+
+    @GetMapping("/courses/pending")
+    public String danhSachKhoaHocPending(Model model) {
+        return danhSachKhoaHoc(model);
     }
 
     @PostMapping("/courses/{id}/approve")
@@ -134,8 +149,11 @@ public class AdminController {
 
     @GetMapping("/materials")
     public String danhSachHocLieu(Model model) {
-        model.addAttribute("choDuyet", hocLieuService.layChoDuyet());
-        model.addAttribute("tatCa",    hocLieuService.layTatCaChoAdmin());
+        var choDuyet = hocLieuService.layChoDuyet();
+        var tatCa = hocLieuService.layTatCaChoAdmin();
+
+        model.addAttribute("choDuyet", choDuyet != null ? choDuyet : java.util.Collections.emptyList());
+        model.addAttribute("tatCa",    tatCa != null ? tatCa : java.util.Collections.emptyList());
         return "admin/materials";
     }
 

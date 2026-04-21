@@ -74,6 +74,7 @@ public class StudentController {
 
         if (daDangKy) {
             model.addAttribute("quizs", quizService.layPublishedCuaKhoaHoc(id));
+            model.addAttribute("hocLieus", hocLieuService.layCuaKhoaHoc(id));
         }
         return "student/course-detail";
     }

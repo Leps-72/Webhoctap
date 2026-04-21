@@ -15,13 +15,14 @@ public class HocLieuDto {
     @Size(max = 500, message = "Mô tả tối đa 500 ký tự")
     private String moTa;
 
-    // "De" | "TrungBinh" | "Kho"
+    // "Dễ" | "Trung bình" | "Khó"
     private String doKho;
 
     // FK — ID chủ đề, môn học, lớp học (chọn từ dropdown)
     private Integer maChuDe;
     private Integer maMonHoc;
     private Integer maLopHoc;
+    private Integer maKhoaHoc;
 
     // File thực tế — không validate @NotNull vì có thể cập nhật không kèm file mới
     private MultipartFile file;

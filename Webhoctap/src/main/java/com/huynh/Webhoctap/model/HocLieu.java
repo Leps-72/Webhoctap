@@ -57,6 +57,11 @@ public class HocLieu {
     @JoinColumn(name = "MaLopHoc", referencedColumnName = "MaLopHoc")
     private LopHoc lopHoc;
 
+    // FK -> KhoaHoc
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MaKhoaHoc", referencedColumnName = "MaKhoaHoc")
+    private KhoaHoc khoaHoc;
+
     @Column(name = "DaDuyet")
     private Boolean daDuyet = false;
 

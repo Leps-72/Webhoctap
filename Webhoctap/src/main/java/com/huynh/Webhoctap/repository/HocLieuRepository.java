@@ -18,6 +18,7 @@ public interface HocLieuRepository extends JpaRepository<HocLieu, Integer> {
     List<HocLieu> findByMonHoc_MaMonHoc(Integer maMonHoc);
 
     List<HocLieu> findByNguoiDung(NguoiDung nguoiDung);
+    List<HocLieu> findByKhoaHoc_MaKhoaHocAndDaDuyet(Integer maKhoaHoc, Boolean daDuyet);
 
     @Modifying
     @Transactional

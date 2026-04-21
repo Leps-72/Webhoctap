@@ -176,19 +176,9 @@
         <a th:href="@{/register}" class="btn-accent">Đăng ký</a>
     </span>
 
-    <!-- Admin -->
-    <span sec:authorize="hasRole('Admin')">
-        <a th:href="@{/admin/dashboard}">Dashboard Admin</a>
-    </span>
-
-    <!-- Teacher -->
-    <span sec:authorize="hasRole('Teacher')">
-        <a th:href="@{/teacher/dashboard}">Dashboard Teacher</a>
-    </span>
-
-    <!-- Student -->
-    <span sec:authorize="hasRole('Student')">
-        <a th:href="@{/student/dashboard}">Dashboard</a>
+    <!-- Dashboard chung cho người đã đăng nhập -->
+    <span sec:authorize="isAuthenticated()">
+        <a th:href="@{/dashboard}">Bảng điều khiển</a>
     </span>
 
     <!-- Đăng xuất -->
@@ -246,9 +236,9 @@
     <div class="course-grid" th:if="${not #lists.isEmpty(khoaHocs)}">
         <div class="course-card" th:each="kh : ${khoaHocs}">
             <div class="course-thumb">
-                <img th:if="${kh.anhBia != null}" th:src="${kh.anhBia}" th:alt="${kh.tenKhoaHoc}"/>
-                <span th:if="${kh.anhBia == null}">Chưa có ảnh bìa</span>
-            </div>
+                <div th:if="${kh.anhBia != null and !#strings.isEmpty(kh.anhBia)}">
+                    <img th:src="${kh.anhBia}" class="course-img" alt="Ảnh bìa khóa học">
+                </div>
             <div class="course-body">
                 <div class="course-title" th:text="${kh.tenKhoaHoc}">Tên khóa học</div>
                 <div class="course-meta">

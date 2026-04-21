@@ -9,6 +9,6 @@ public class AccessDeniedController {
     // Spring Security redirect đến đây khi user đăng nhập nhưng không đủ quyền (403)
     @GetMapping("/access-denied")
     public String accessDenied() {
-        return "error/403";
+        return "access-denied";
     }
 }

@@ -24,10 +24,23 @@ public class AuthController {
     @GetMapping("/login")
     public String trangDangNhap(@RequestParam(value = "error",  required = false) String error,
                                 @RequestParam(value = "logout", required = false) String logout,
+                                @org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails ud,
                                 Model model) {
+        if (ud != null) return "redirect:/dashboard";
         if (error  != null) model.addAttribute("errorMsg",  "Email hoặc mật khẩu không đúng.");
         if (logout != null) model.addAttribute("logoutMsg", "Bạn đã đăng xuất thành công.");
         return "auth/login";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboardRouter(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails ud) {
+        if (ud == null) return "redirect:/login";
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_Admin"));
+        boolean isTeacher = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_Teacher"));
+        if (isAdmin) return "redirect:/admin/dashboard";
+        if (isTeacher) return "redirect:/teacher/dashboard";
+        return "redirect:/student/dashboard";
     }
 
     // ── GET /register ─────────────────────────────────────────────────────

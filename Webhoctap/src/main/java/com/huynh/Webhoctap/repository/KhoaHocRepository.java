@@ -13,4 +13,5 @@ public interface KhoaHocRepository extends JpaRepository<KhoaHoc, Integer> {
 
     List<KhoaHoc> findByGiaoVien_MaNguoiDung(Integer maGiaoVien);
     List<KhoaHoc> findByGiaoVien(NguoiDung giaoVien);
+    List<KhoaHoc> findTop5ByOrderByNgayTaoDesc();
 }
